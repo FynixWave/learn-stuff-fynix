@@ -1,12 +1,20 @@
 import makeFakeGroup from "./fixtures/group";
 import makeGroup from "./";
+import { expect } from "@jest/globals";
 
 describe("group", () => {
   test("if it has a valid hash", () => {
-    const group = makeFakeGroup({ hash: null });
+    const group = makeFakeGroup({ hash: "invalid" });
     expect(() => makeGroup(group)).toThrow(
       new Error("Group must have a valid hash.")
     );
+  });
+
+  test("if it can create a valid hash", () => {
+    const noHash = makeFakeGroup({ hash: undefined });
+    expect(() => makeGroup(noHash)).not.toThrow();
+    const group = makeGroup(noHash);
+    expect(group.getHash()).toBeDefined();
   });
 
   test("if it has a name", () => {
@@ -129,4 +137,17 @@ describe("group", () => {
       new Error('Group must have an "organisationId"')
     );
   });
+});
+
+test("if it can activate status", () => {
+  const group = makeFakeGroup();
+  expect(() => makeGroup(group)).not.toThrow();
+  expect(makeGroup(group).isActive()).toBe(true);
+});
+
+test("if it can deactivate status", () => {
+  const active = makeFakeGroup();
+  const group = makeGroup(active);
+  group.markNotActive();
+  expect(group.isActive()).toBe(false);
 });
